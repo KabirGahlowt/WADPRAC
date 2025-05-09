@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>User Registration</title>
+</head>
+
+<body>
+    <h1>Register User</h1>
+
+    <form id="registrationForm">
+        <input type="text" id="name" placeholder="Name" required><br><br>
+        <input type="email" id="email" placeholder="Email" required><br><br>
+        <input type="password" id="password" placeholder="Password" required><br><br>
+        <button type="submit">Register</button>
+    </form>
+
+    <script>
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        document.getElementById('registrationForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const user = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value
+            };
+
+            // Push to array
+            users.push(user);
+
+            // Save to Local Storage
+            localStorage.setItem('users', JSON.stringify(users));
+
+            // Simulate AJAX POST
+            fakeAjaxPost(user);
+
+            // Redirect to list page after registration
+            window.location.href = "users.html";
+        });
+
+        function fakeAjaxPost(data) {
+            console.log("Sending data with AJAX POST...");
+            console.log(data);
+        }
+    </script>
+</body>
+
+</html>

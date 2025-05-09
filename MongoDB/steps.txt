@@ -1,0 +1,109 @@
+Create your project folder and open it on cmd
+
+1. Initialize a new npm project:
+   
+   npm init
+
+2. Install Express.js and save it as a dependency:
+   
+   npm install express --save
+
+3.Install Mongodb:
+     npm install mongodb
+
+4. Create an `index.js` file with the following content:
+
+    const express = require('express');
+    const dbConnect = require('./mongodb')
+    const app=express();
+    app.use(express.json())
+
+    //GET API
+    app.get('/', async (req, res) => {
+        let result = await dbConnect();
+        result = await result.find().toArray();
+        res.send(result);
+    })
+
+    //POST API
+    app.post('/', async (req, res) => {
+        let result = await dbConnect();
+        result = await result.insertOne(req.body);
+        res.send("Data succesfully inserted");
+    })
+
+    //UPDATE API
+    app.put('/', async (req, res) => {
+        let result = await dbConnect();
+        result = await result.updateOne(
+            { name: req.body.name }, // Find the document by name
+            { $set: { name: req.body.newval } } // Update the name to the new value
+        );
+        res.send("Database successfully updated");
+    });
+
+
+
+    //DELETE API
+    app.delete('/', async (req, res) => {
+        let result = await dbConnect();
+        result = await result.deleteOne(req.body);
+        res.send("Data succesfully deleted");
+    })
+
+
+    const port = 3000;
+    app.listen(port, () => {
+        console.log(`Example app listening on port http://localhost:${port}`)
+    })
+
+5. Create an `mongodb.js` file with the following content:
+
+    const { MongoClient } = require('mongodb')
+    const url = "mongodb://127.0.0.1:27017"
+    const database = 'student';
+    const client = new MongoClient(url);
+
+    const dbConnect = async () => {
+        const result = await client.connect();
+        const db = await result.db(database);
+
+        return db.collection('profile');
+    }
+
+    module.exports = dbConnect;
+
+6. in cmd run node index.js
+
+7. Open MongoDB and create a new connection without entering any connection name simply click on save and connect
+
+8. Open Postman 
+
+    Select POST method with url http://localhost:3000/
+    in the body section write 
+    {
+        "name": "John Doe",
+        "age": 22,
+        "email": "john@example.com"
+    }
+
+    click send you should see database student in your mongodb with the above data inserted
+
+    Select GET method with url http://localhost:3000/
+    you should see the output in Postman
+
+      Select PUT method with url http://localhost:3000/
+      in body write 
+       {
+            "name": "John Doe",
+            "newval": "Jane Doe"
+       }
+ 
+    in mongodb name should be updated
+
+    Select DELETE method with url http://localhost:3000/
+    which will delete the record
+
+
+
+    
